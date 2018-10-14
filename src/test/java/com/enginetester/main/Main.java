@@ -21,6 +21,8 @@ public class Main extends Game {
     private Renderer renderer;
     private Camera camera;
     private Entity entity;
+    private Vector3f sunPos;
+    private float count;
 
 
     private Main() {
@@ -34,28 +36,38 @@ public class Main extends Game {
     public void init() {
         setClearColor(new Color(255, 255, 255));
 
-        camera = new Camera(window, 50f, 0.1f, 1000.0f);
+        camera = new Camera(window, 50f, 0.1f, 10000.0f);
+        camera.setPosition(new Vector3f(250.0f, 15.0f, 250.0f));
 
         scene = new Scene();
         renderer = new Renderer();
 
-        entity = new Entity(Cube.getMesh(), Material.TEST, new Color(0.0f, 0.0f, 0.0f), new Vector3f(0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 1.0f);
-        scene.add(entity);
+        sunPos = new Vector3f(250.0f, 100.0f, 250.0f);
+
+        scene.setSunPos(sunPos);
+        scene.useSun(true);
+
+        //entity = new Entity(Cube.getMesh(), Material.TEST, new Color(0.0f, 0.0f, 0.0f), new Vector3f(0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 1.0f);
+        //scene.add(entity);
         scene.add(new Terrain(500, 500));
 
-        for (int i = 0; i < 20; i++) {
+        /*for (int i = 0; i < 20; i++) {
             try {
                 scene.add(new Entity(Cube.getMesh(), Material.TEST, new Texture("resources/textures/dirt.jpg"), new Vector3f(new Random().nextFloat() * 10.0f, 0.0f, new Random().nextFloat() * 10.0f), new Vector3f(0.0f, new Random().nextFloat() * 360, 1.0f), new Random().nextFloat() * 0.3f + 0.2f));
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
+        }*/
 
         useControls(new FirstPerson(camera, window,1.0f, 0.6f, true));
     }
 
     @Override
-    public void update() {}
+    public void update() {
+        sunPos = new Vector3f((float) (250.0f + 50.0f * Math.cos(count)), 100.0f, (float) (250.0f + 50.0f * Math.sin(count)));
+        scene.setSunPos(sunPos);
+        count+= 0.01f;
+    }
 
     @Override
     public void render() { renderer.render(scene, camera); }

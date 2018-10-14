@@ -24,7 +24,6 @@ public class Terrain {
     private Mesh mesh;
     private Matrix4f modelViewMatrix;
 
-
     public Terrain(int width, int depth) {
         this.width = width;
         this.depth = depth;
@@ -47,7 +46,7 @@ public class Terrain {
                 int index = x + z * width;
 
                 // heights
-                float y = noise.generateTerrainNoise((float) x * 0.1f, (float) z * 0.1f, 70.0f, 3f, 0.3f);
+                float y = noise.generateTerrainNoise((float) x * 0.1f, (float) z * 0.1f, 45.0f, 3f, 0.3f);
                 heights[x][z] = y;
 
                 // Vertices
