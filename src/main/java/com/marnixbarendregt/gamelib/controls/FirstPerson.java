@@ -1,6 +1,7 @@
 package com.marnixbarendregt.gamelib.controls;
 
 import com.marnixbarendregt.gamelib.main.Camera;
+import com.marnixbarendregt.gamelib.main.Terrain;
 import com.marnixbarendregt.gamelib.main.Window;
 import org.joml.Vector3f;
 
@@ -12,15 +13,21 @@ public class FirstPerson extends Controls {
     private boolean left, right, forward, backward, up, down = false;
     private float forwardSpeed, backwardSpeed, leftSpeed, rightSpeed;
     private Camera camera;
-    private MouseListener mouse;
-    private boolean canFly = false;
+    private boolean canFly, isFlying = false;
+    private boolean gravity;
+    private float bodyHeight = 3.0f;
+    private Terrain terrain;
 
-    public FirstPerson(Camera camera, Window window, float fbSpeed, float lrSpeed, boolean canFly) {
+    public FirstPerson(Camera camera, Window window, Terrain terrain, float fbSpeed, float lrSpeed, boolean canFly, boolean gravity) {
         this.camera = camera;
         this.forwardSpeed = fbSpeed;
         this.backwardSpeed = fbSpeed / 2;
         this.leftSpeed = this.rightSpeed = lrSpeed;
         this.canFly = canFly;
+        this.gravity = gravity;
+        this.terrain = terrain;
+
+        if (!gravity) isFlying = true;
 
         new KeyListener(window) {
             @Override
@@ -39,11 +46,18 @@ public class FirstPerson extends Controls {
                         backward = true;
                         break;
                     case Keys.KEY_SPACE:
-                        up = true;
+                        if (canFly && isFlying) {
+                            up = true;
+                        }
+
                         break;
                     case Keys.KEY_LEFT_SHIFT:
-                        down = true;
+                        if (canFly && isFlying) {
+                            down = true;
+                        }
                         break;
+                    case Keys.KEY_R:
+                        if (canFly) isFlying = !isFlying;
                 }
             }
 
@@ -63,7 +77,8 @@ public class FirstPerson extends Controls {
                         backward = false;
                         break;
                     case Keys.KEY_SPACE:
-                        up = false;
+                        if (up) up = false;
+
                         break;
                     case Keys.KEY_LEFT_SHIFT:
                         down = false;
@@ -77,7 +92,7 @@ public class FirstPerson extends Controls {
             }
         };
 
-        mouse = new MouseListener(window, 250f) {
+        MouseListener mouse = new MouseListener(window, 250f) {
             @Override
             public void onMove(float deltaX, float deltaY) {
                 camera.increaseRotation(new Vector3f(deltaY, deltaX, 0.0f));
@@ -90,26 +105,41 @@ public class FirstPerson extends Controls {
         float yOffset = 0.0f;
         float zOffset = 0.0f;
 
+        float xPos = camera.getPosition().x;
+        float zPos = camera.getPosition().z;
+        float currentHeight = terrain.getHeightAt((int) xPos, (int) zPos);
+
+        if ((camera.getPosition().y - currentHeight) < bodyHeight && !isFlying) {
+            down = false;
+            isFlying = false;
+            camera.setPosition(new Vector3f(xPos, currentHeight + bodyHeight, zPos));
+        }
+
+        if (gravity && !isFlying) {
+            yOffset -= 0.8f;
+        }
+
         if (forward) {
             xOffset += moveInDirectionX(camera.getRotation().y, forwardSpeed);
-            zOffset += -moveInDirectionY(camera.getRotation().y, forwardSpeed);
+            zOffset += -moveInDirectionZ(camera.getRotation().y, forwardSpeed);
         }
         if (backward) {
             xOffset += -moveInDirectionX(camera.getRotation().y, backwardSpeed);
-            zOffset += moveInDirectionY(camera.getRotation().y, backwardSpeed);
+            zOffset += moveInDirectionZ(camera.getRotation().y, backwardSpeed);
         }
         if (right) {
             xOffset += moveInDirectionX(camera.getRotation().y + 90, rightSpeed);
-            zOffset += -moveInDirectionY(camera.getRotation().y + 90, rightSpeed);
+            zOffset += -moveInDirectionZ(camera.getRotation().y + 90, rightSpeed);
         }
         if (left) {
             xOffset += -moveInDirectionX(camera.getRotation().y + 90, leftSpeed);
-            zOffset += moveInDirectionY(camera.getRotation().y + 90, leftSpeed);
+            zOffset += moveInDirectionZ(camera.getRotation().y + 90, leftSpeed);
         }
-        if (up) {
+
+        if (up && isFlying) {
             yOffset += backwardSpeed;
         }
-        if (down) {
+        if (down && isFlying) {
             yOffset -= backwardSpeed;
         }
 

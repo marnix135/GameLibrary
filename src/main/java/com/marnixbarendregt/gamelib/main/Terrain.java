@@ -23,13 +23,14 @@ public class Terrain {
     private int indicesSize;
     private Mesh mesh;
     private Matrix4f modelViewMatrix;
+    private float[][] heights;
 
     public Terrain(int width, int depth) {
         this.width = width;
         this.depth = depth;
         this.modelViewMatrix = new Matrix4f().identity();
 
-        float[][] heights = new float[width][depth];
+        heights = new float[width][depth];
 
         float[] vertices = new float[width * depth * 3];
         int[] indices = new int[6 * (width - 1) * (depth - 1)];
@@ -177,6 +178,10 @@ public class Terrain {
             normalArr[i] = normals.get(i);
         }
         return normalArr;
+    }
+
+    public float getHeightAt(int x, int z) {
+        return heights[x][z];
     }
 
     public Mesh getMesh() {

@@ -37,7 +37,6 @@ public class Main extends Game {
         setClearColor(new Color(255, 255, 255));
 
         camera = new Camera(window, 50f, 0.1f, 10000.0f);
-        camera.setPosition(new Vector3f(250.0f, 15.0f, 250.0f));
 
         scene = new Scene();
         renderer = new Renderer();
@@ -49,7 +48,9 @@ public class Main extends Game {
 
         //entity = new Entity(Cube.getMesh(), Material.TEST, new Color(0.0f, 0.0f, 0.0f), new Vector3f(0.0f), new Vector3f(0.0f, 0.0f, 0.0f), 1.0f);
         //scene.add(entity);
-        scene.add(new Terrain(500, 500));
+        Terrain terrain = new Terrain(500, 500);
+        scene.add(terrain);
+        camera.setPosition(new Vector3f(250.0f, terrain.getHeightAt(250, 250) + 2.0f, 250.0f));
 
         /*for (int i = 0; i < 20; i++) {
             try {
@@ -59,7 +60,7 @@ public class Main extends Game {
             }
         }*/
 
-        useControls(new FirstPerson(camera, window,1.0f, 0.6f, true));
+        useControls(new FirstPerson(camera, window, terrain,0.2f, 0.2f, true, true));
     }
 
     @Override

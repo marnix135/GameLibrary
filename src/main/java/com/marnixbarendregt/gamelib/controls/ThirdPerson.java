@@ -91,19 +91,19 @@ public class ThirdPerson extends Controls {
 
         if (forward) {
             xOffset += moveInDirectionX(player.getRotation().y, forwardSpeed);
-            zOffset += -moveInDirectionY(player.getRotation().y, forwardSpeed);
+            zOffset += -moveInDirectionZ(player.getRotation().y, forwardSpeed);
         }
         if (backward) {
             xOffset += -moveInDirectionX(player.getRotation().y, backwardSpeed);
-            zOffset += moveInDirectionY(player.getRotation().y, backwardSpeed);
+            zOffset += moveInDirectionZ(player.getRotation().y, backwardSpeed);
         }
         if (right) {
             xOffset += moveInDirectionX(player.getRotation().y + 90, rightSpeed);
-            zOffset += -moveInDirectionY(player.getRotation().y + 90, rightSpeed);
+            zOffset += -moveInDirectionZ(player.getRotation().y + 90, rightSpeed);
         }
         if (left) {
             xOffset += -moveInDirectionX(player.getRotation().y + 90, leftSpeed);
-            zOffset += moveInDirectionY(player.getRotation().y + 90, leftSpeed);
+            zOffset += moveInDirectionZ(player.getRotation().y + 90, leftSpeed);
         }
 
         player.increasePosition(new Vector3f(xOffset, 0.0f,  zOffset));
