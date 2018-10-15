@@ -17,8 +17,9 @@ public class FirstPerson extends Controls {
     private boolean gravity;
     private float bodyHeight = 3.0f;
     private Terrain terrain;
+    private float mouseSensitivity;
 
-    public FirstPerson(Camera camera, Window window, Terrain terrain, float fbSpeed, float lrSpeed, boolean canFly, boolean gravity) {
+    public FirstPerson(Camera camera, Window window, Terrain terrain, float fbSpeed, float lrSpeed, boolean canFly, boolean gravity, float mouseSensitivity) {
         this.camera = camera;
         this.forwardSpeed = fbSpeed;
         this.backwardSpeed = fbSpeed / 2;
@@ -26,6 +27,7 @@ public class FirstPerson extends Controls {
         this.canFly = canFly;
         this.gravity = gravity;
         this.terrain = terrain;
+        this.mouseSensitivity = mouseSensitivity;
 
         if (!gravity) isFlying = true;
 
@@ -95,7 +97,14 @@ public class FirstPerson extends Controls {
         MouseListener mouse = new MouseListener(window, 250f) {
             @Override
             public void onMove(float deltaX, float deltaY) {
-                camera.increaseRotation(new Vector3f(deltaY, deltaX, 0.0f));
+                deltaX *= mouseSensitivity;
+                deltaY *= mouseSensitivity;
+                Vector3f newRotation = new Vector3f(deltaY, deltaX, 0.0f);
+                newRotation.add(camera.getRotation());
+                if (newRotation.x > 90.0f | newRotation.x < -90.0f) {
+                    newRotation = camera.getRotation().add(0.0f, deltaX, 0.0f);
+                }
+                camera.setRotation(newRotation);
             }
         };
     }
@@ -105,18 +114,17 @@ public class FirstPerson extends Controls {
         float yOffset = 0.0f;
         float zOffset = 0.0f;
 
-        float xPos = camera.getPosition().x;
-        float zPos = camera.getPosition().z;
-        float currentHeight = terrain.getHeightAt((int) xPos, (int) zPos);
+        Vector3f cameraPos = camera.getPosition();
+        float currentHeight = terrain.getHeightAt((int) cameraPos.x, (int) cameraPos.z);
 
         if ((camera.getPosition().y - currentHeight) < bodyHeight && !isFlying) {
             down = false;
             isFlying = false;
-            camera.setPosition(new Vector3f(xPos, currentHeight + bodyHeight, zPos));
+            camera.setPosition(new Vector3f(cameraPos.x, currentHeight + bodyHeight, cameraPos.z));
         }
 
         if (gravity && !isFlying) {
-            yOffset -= 0.8f;
+            yOffset -= 0.6f;
         }
 
         if (forward) {
@@ -142,6 +150,8 @@ public class FirstPerson extends Controls {
         if (down && isFlying) {
             yOffset -= backwardSpeed;
         }
+
+        System.out.println(xOffset);
 
         camera.increasePosition(new Vector3f(xOffset, yOffset,  zOffset));
     }

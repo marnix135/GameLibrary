@@ -60,7 +60,7 @@ public class Main extends Game {
             }
         }*/
 
-        useControls(new FirstPerson(camera, window, terrain,0.2f, 0.2f, true, true));
+        useControls(new FirstPerson(camera, window, terrain,0.2f, 0.2f, true, true, 1.2f));
     }
 
     @Override

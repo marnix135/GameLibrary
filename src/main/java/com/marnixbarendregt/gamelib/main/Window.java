@@ -32,6 +32,7 @@ public class Window {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+        glfwWindowHint(GLFW_FOCUSED, GL_TRUE);
 
         if (resizable) {
             glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
@@ -78,6 +79,7 @@ public class Window {
 
     public void show() {
         glfwShowWindow(window);
+        glfwFocusWindow(window);
     }
 
     public void hide() {
