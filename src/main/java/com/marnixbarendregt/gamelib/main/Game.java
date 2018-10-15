@@ -3,6 +3,7 @@ package com.marnixbarendregt.gamelib.main;
 import com.marnixbarendregt.gamelib.controls.Controls;
 import com.marnixbarendregt.gamelib.utils.Color;
 import org.lwjgl.Version;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
@@ -45,14 +46,26 @@ public abstract class Game {
 
     private void loop() {
         init();
+        long lastTime = System.nanoTime();
+        double delta = 0.0;
+        double ns = 1000000000.0 / 60.0;
 
         while ( !glfwWindowShouldClose(window) ) {
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            long nowTime = System.nanoTime();
+            delta += (nowTime - lastTime) / ns;
+            lastTime = nowTime;
+            if (delta > 1.0) {
+                // Update
+                update();
+                if (controls != null) {
+                    controls.move();
+                }
 
-            if (controls != null) {
-                controls.move();
+                delta--;
             }
-            update();
+
+            // Render
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             render();
 
             glfwSwapBuffers(window); // swap the color buffers
