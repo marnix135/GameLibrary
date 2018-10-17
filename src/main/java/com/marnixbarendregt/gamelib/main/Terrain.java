@@ -180,8 +180,20 @@ public class Terrain {
         return normalArr;
     }
 
-    public float getHeightAt(int x, int z) {
-        return heights[x][z];
+    public float getHeightAt(float x, float z) {
+        if (x < 0 | z < 0 | x > width | z > depth) return 0;
+        int lowX = (int) Math.floor(x);
+        int highX = (int) Math.ceil(x);
+        int lowZ = (int) Math.floor(z);
+        int highZ = (int) Math.ceil(z);
+
+        float lowHeight = heights[lowX][lowZ];
+        float highHeight = heights[highX][highZ];
+
+        float averageHeightX = lowHeight * (highX - x) + highHeight * (x - lowX);
+        float averageHeightZ = lowHeight * (highZ - z) + highHeight * (z - lowZ);
+
+        return (averageHeightX + averageHeightZ) / 2.0f;
     }
 
     public Mesh getMesh() {

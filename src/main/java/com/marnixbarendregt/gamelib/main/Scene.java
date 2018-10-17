@@ -5,6 +5,8 @@ import org.joml.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.lwjgl.opengl.GL11.glClearColor;
+
 /**
  * Created by marnixbarendregt on 20/09/2017.
  */
@@ -13,6 +15,7 @@ public class Scene {
     private List<Terrain> terrains;
     private boolean useSun = false;
     private Vector3f sunPosition = new Vector3f();
+    private Vector3f fogColor = null;
 
     public Scene() {
         entities = new ArrayList<>();
@@ -25,6 +28,15 @@ public class Scene {
 
     public boolean getUseSun() {
         return this.useSun;
+    }
+
+    public void addFog(Vector3f color) {
+        this.fogColor = color;
+        glClearColor(color.x, color.y, color.z, 1.0f);
+    }
+
+    public Vector3f getFogColor() {
+        return fogColor;
     }
 
     public void setSunPos(Vector3f sunPosition) {

@@ -66,7 +66,7 @@ public class Window {
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
         // Enable v-sync
-        glfwSwapInterval(1);
+        glfwSwapInterval(GL_FALSE);
     }
 
     public void setSize(int width, int height) {

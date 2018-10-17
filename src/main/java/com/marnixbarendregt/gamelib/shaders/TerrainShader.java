@@ -12,6 +12,8 @@ public class TerrainShader extends ShaderProgram {
             createUniform("color");
             createUniform("sunPos");
             createUniform("useSun");
+            createUniform("useFog");
+            createUniform("fogColor");
         } catch(Exception e) {
             e.printStackTrace();
         }

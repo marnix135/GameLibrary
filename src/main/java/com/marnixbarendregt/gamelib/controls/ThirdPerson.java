@@ -30,6 +30,10 @@ public class ThirdPerson extends Controls {
         this.cameraHeight = 3f;
         this.cameraAngle = (float) Math.toDegrees(Math.atan(cameraHeight / cameraDistance));
         this.cameraYOffset = 2.0f;
+        float cameraX = player.getPosition().x - (float) (Math.sin(Math.toRadians(player.getRotation().y)) * cameraDistance);
+        float cameraZ = player.getPosition().z + (float) (Math.cos(Math.toRadians(player.getRotation().y)) * cameraDistance);
+
+        camera.setPosition(new Vector3f(cameraX, cameraHeight + cameraYOffset, cameraZ));
 
 
         new KeyListener(window) {

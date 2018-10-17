@@ -48,7 +48,10 @@ public abstract class Game {
         init();
         long lastTime = System.nanoTime();
         double delta = 0.0;
-        double ns = 1000000000.0 / 60.0;
+        double ns = 1000000000.0 / 120.0;
+        int frames = 0;
+        int ticks = 0;
+        long lastTimer = System.currentTimeMillis();
 
         while ( !glfwWindowShouldClose(window) ) {
             long nowTime = System.nanoTime();
@@ -60,13 +63,21 @@ public abstract class Game {
                 if (controls != null) {
                     controls.move();
                 }
-
+                ticks++;
                 delta--;
             }
 
             // Render
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             render();
+            frames++;
+
+            if (System.currentTimeMillis() - lastTimer >= 1000) {
+                lastTimer += 1000;
+                System.out.println("Ticks: " + ticks + " , Frames: " + frames);
+                ticks = 0;
+                frames = 0;
+            }
 
             glfwSwapBuffers(window); // swap the color buffers
 

@@ -18,6 +18,7 @@ public class FirstPerson extends Controls {
     private float bodyHeight = 3.0f;
     private Terrain terrain;
     private float mouseSensitivity;
+    private float tick = 0.0f;
 
     public FirstPerson(Camera camera, Window window, Terrain terrain, float fbSpeed, float lrSpeed, boolean canFly, boolean gravity, float mouseSensitivity) {
         this.camera = camera;
@@ -115,16 +116,10 @@ public class FirstPerson extends Controls {
         float zOffset = 0.0f;
 
         Vector3f cameraPos = camera.getPosition();
-        float currentHeight = terrain.getHeightAt((int) cameraPos.x, (int) cameraPos.z);
-
-        if ((camera.getPosition().y - currentHeight) < bodyHeight && !isFlying) {
-            down = false;
-            isFlying = false;
-            camera.setPosition(new Vector3f(cameraPos.x, currentHeight + bodyHeight, cameraPos.z));
-        }
+        float currentHeight = terrain.getHeightAt(cameraPos.x, cameraPos.z);
 
         if (gravity && !isFlying) {
-            yOffset -= 0.6f;
+            yOffset -= 0.2f;
         }
 
         if (forward) {
@@ -144,6 +139,13 @@ public class FirstPerson extends Controls {
             zOffset += moveInDirectionZ(camera.getRotation().y + 90, leftSpeed);
         }
 
+        if ((cameraPos.y - currentHeight) <= bodyHeight + 0.4f && !isFlying) {
+            float newHeight = terrain.getHeightAt(cameraPos.x + xOffset, cameraPos.z + zOffset);
+            down = false;
+            isFlying = false;
+            yOffset = newHeight + bodyHeight - cameraPos.y;
+        }
+
         if (up && isFlying) {
             yOffset += backwardSpeed;
         }
@@ -151,7 +153,11 @@ public class FirstPerson extends Controls {
             yOffset -= backwardSpeed;
         }
 
-        System.out.println(xOffset);
+        if (xOffset != 0.0f | zOffset != 0.0f && !isFlying) {
+            yOffset += 0.2f * Math.sin(tick);
+            tick+=0.15f;
+            tick %= Math.PI * 2;
+        }
 
         camera.increasePosition(new Vector3f(xOffset, yOffset,  zOffset));
     }

@@ -9,13 +9,19 @@ uniform mat4 modelViewMatrix;
 uniform vec3 color;
 uniform vec3 sunPos;
 uniform float useSun;
+uniform float useFog;
 
 out vec3 outColor;
 out float diff;
+out float visibility;
+
+const float fogDensity = 0.007;
+const float gradient = 1.5;
 
 void main()
 {
-	gl_Position = projectionMatrix * worldMatrix * modelViewMatrix * vec4(position, 1.0);
+    vec4 posRelativeToCam = worldMatrix * modelViewMatrix * vec4(position, 1.0);
+	gl_Position = projectionMatrix * posRelativeToCam;
 	outColor = color;
 
 
@@ -24,5 +30,11 @@ void main()
 	} else {
 	    diff = 1.0;
 	    outColor = vec3(1.0, 0.0, 0.0);
+	}
+
+	if (useFog > 0.5) {
+        float distance = length(posRelativeToCam.xyz);
+        visibility = exp(-pow((distance * fogDensity), gradient));
+        visibility = clamp(visibility, 0.0, 1.0);
 	}
 }

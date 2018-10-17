@@ -34,6 +34,12 @@ public class Renderer {
             currentShader.setUniform("color", new Vector3f(0.4f, 0.9f, 0.4f));
             currentShader.setUniform("useSun", scene.getUseSun());
             currentShader.setUniform("sunPos", scene.getSunPos());
+            if (scene.getFogColor() != null) {
+                currentShader.setUniform("useFog", true);
+                currentShader.setUniform("fogColor", scene.getFogColor());
+            } else {
+                currentShader.setUniform("useFog", false);
+            }
 
             terrain.render();
 
